@@ -8,11 +8,11 @@ using namespace std;
 #define IMAGE_SCALE 1
 #define IMAGE_WIDTH 1280.0
 #define IMAGE_HEIGHT 720.0
-#define OBJECT_MINSIZE 140
-#define OBJECT_MAXSIZE 400
+#define OBJECT_MINSIZE 140 //140
+#define OBJECT_MAXSIZE 400 //400
 #define OBJECT_SIZE_CHANGE_RANGE 200
-#define OBJECT_MOVEMENT_DISTANCE 200
-#define OBJECT_MINIMUM_VISIBLE_FRAMES 20
+#define OBJECT_MOVEMENT_DISTANCE 100
+#define OBJECT_MINIMUM_VISIBLE_FRAMES 30
 
 Detector::Detector() {
     
@@ -37,7 +37,7 @@ void Detector::initOpenCV() {
     assert(mainBundle);
     
 #ifdef DEBUG
-    capture = cvCaptureFromAVI("vid_trailer.mov"); // full path
+    capture = cvCaptureFromAVI("/Users/logotype/Documents/Work/SCB/OldOld/Crowd_/vid_2.mov"); // full path
     captureFPS = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
 #else
     capture = cvCreateCameraCapture(CV_CAP_ANY);
@@ -48,7 +48,6 @@ void Detector::initOpenCV() {
     
     // Get Resources URL
     CFURLRef url = CFBundleCopyResourceURL(mainBundle, CFSTR("haarcascade_frontalface_alt2"), CFSTR("xml"), NULL);
-    assert(url);
     
     // Get a mutable string and remove localhost
     CFMutableStringRef urlWithLocalhost = CFStringCreateMutableCopy(NULL, 0, CFURLGetString(url));
@@ -100,38 +99,34 @@ void Detector::detectAndDisplay() {
     
     if(personList.empty()) {
         for(int i = 0; i < faces.size(); i++) {
-            Person person = Person(faces[i], captureCount++, randomString());
-            personList.push_front(person);
+            personList.push_front(Person(faces[i], captureCount++, randomString()));
         }
         
     } else if(personList.size() <= faces.size()) {
         
-        bool used[ faces.size() ];
+        bool used[faces.size()];
         for(int i = 0; i < faces.size(); i++)
             used[i] = false;
         
-        float record = 5000;
         list<Person>::iterator iterator;
         for(iterator = personList.begin(); iterator!= personList.end(); iterator++)
         {
-            // find faces[index] that is closest to face f
-            // set used[index] to true so that it can't be used twice
+            float record = 5000;
             bool doUpdate = false;
             int index = -1;
             
             for(int i = 0; i < faces.size(); i++) {
                 float d = dist(faces[i].x, faces[i].y, iterator->rectangle.x, iterator->rectangle.y);
-                //cout << "ADist: " << round(d) << ", Currently: " << personList.size() << " people tracked (" << faces.size() << "), ID: " << personList.begin()->id << ", x: " << personList.begin()->x << ", y: " << personList.begin()->y << "\n";
-                
-                if(d < record && d < OBJECT_MOVEMENT_DISTANCE && !used[i] && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
+                //if(d < record && d < OBJECT_MOVEMENT_DISTANCE && !used[i] && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
+                if(d < record && !used[i] && d < OBJECT_MOVEMENT_DISTANCE) {
                     record = d;
                     index = i;
                     doUpdate = true;
                 }
             }
             
+            // update Person object location
             if(doUpdate) {
-                // update Person object location
                 used[index] = true;
                 iterator->update(faces[index]);
             }
@@ -140,22 +135,7 @@ void Detector::detectAndDisplay() {
         // add any unused faces
         for(int i = 0; i < faces.size(); i++) {
             if(!used[i]) {
-                
-                bool didOverlap = false;
-                list<Person>::iterator iterator;
-                for(iterator = personList.begin(); iterator!= personList.end(); iterator++) {
-                    if (faces[i].x < (iterator->rectangle.x + iterator->rectangle.width) && (faces[i].x + faces[i].width) > iterator->rectangle.x &&
-                        faces[i].y < (iterator->rectangle.y + iterator->rectangle.height) && (faces[i].y + faces[i].height) > iterator->rectangle.y) {
-                        didOverlap = true;
-                        break;
-                    }
-                }
-                
-                if(!didOverlap) {
-                    // Add person in map
-                    Person person = Person(faces[i], captureCount++, randomString());
-                    personList.push_front(person);
-                }
+                personList.push_front(Person(faces[i], captureCount++, randomString()));
             }
         }
     } else {
@@ -163,26 +143,22 @@ void Detector::detectAndDisplay() {
         // all Person objects start out as available
         list<Person>::iterator iterator;
         for(iterator = personList.begin(); iterator!= personList.end(); iterator++)
-        {
             iterator->available = true;
-        }
         
         // match pos with a Person object
-        float record = 5000;
         for(int i = 0; i < faces.size(); i++) {
-            // find face object closest to faces[i]
-            // set available to false
             int index = -1;
             int j = 0;
             
+            float record = 5000;
             bool doUpdate = false;
             list<Person>::iterator iterator;
             for(iterator = personList.begin(); iterator!= personList.end(); iterator++)
             {
                 float d = dist(faces[i].x, faces[i].y, iterator->rectangle.x, iterator->rectangle.y);
-                //cout << "BDist: " << round(d) << ", Currently: " << personList.size() << " people tracked (" << faces.size() << "), ID: " << personList.begin()->id << ", x: " << personList.begin()->x << ", y: " << personList.begin()->y << "\n";
                 
-                if(d < record && d < OBJECT_MOVEMENT_DISTANCE && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
+                //if(d < record && d < OBJECT_MOVEMENT_DISTANCE && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
+                if(d < record && iterator->available && d < OBJECT_MOVEMENT_DISTANCE) {
                     record = d;
                     index = j;
                     doUpdate = true;
@@ -199,7 +175,7 @@ void Detector::detectAndDisplay() {
                 updatePerson->update(faces[i]);
             }
         }
-        // Check for overlaps, delete the least visible frame
+        // check for overlaps, delete the least visible frame
         list<Person>::iterator deleteIterator = personList.begin();
         while (deleteIterator != personList.end())
         {
@@ -211,13 +187,12 @@ void Detector::detectAndDisplay() {
                                                deleteIterator->rectangle.x < (iterator->rectangle.x + iterator->rectangle.width) && (deleteIterator->rectangle.x + deleteIterator->rectangle.width) > iterator->rectangle.x &&
                                                deleteIterator->rectangle.y < (iterator->rectangle.y + iterator->rectangle.height) && (deleteIterator->rectangle.y + deleteIterator->rectangle.height) > iterator->rectangle.y)) {
                     personList.erase(deleteIterator++);
-                    break;
-                    cout << "killed overlap" << endl;
                     captureCount--;
                     if(captureCount<0) {
                         captureCount = 0;
                     }
                     didDelete = true;
+                    break;
                 } else {
                     deleteIterator->countDown();
                 }
@@ -231,11 +206,18 @@ void Detector::detectAndDisplay() {
     if(personList.size() > 0) {
         
         stringstream iWidth;
-        iWidth << IMAGE_WIDTH;
-        
         stringstream iHeight;
+
+#ifdef DEBUG
+        int width = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
+        int height = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
+        iWidth << width;
+        iHeight << height;
+#else
+        iWidth << IMAGE_WIDTH;
         iHeight << IMAGE_HEIGHT;
-        
+#endif
+
         stringstream iScale;
         iScale << IMAGE_SCALE;
         
@@ -279,8 +261,8 @@ void Detector::detectAndDisplay() {
             pV << iterator->visibleFrames;
             
             JSON += "    {\n"
-            "        \"id\": \"" + pID.str() + "\",\n"
-            "        \"idString\": " + pIDString.str() + ",\n"
+            "        \"id\": " + pID.str() + ",\n"
+            "        \"idString\": \"" + pIDString.str() + "\",\n"
             "        \"x\": " + pX.str() + ",\n"
             "        \"y\": " + pY.str() + ",\n"
             "        \"width\": " + pW.str() + ",\n"
@@ -305,20 +287,14 @@ void Detector::detectAndDisplay() {
             cv::rectangle(draw_image, p1, p2, CV_RGB(0, 255, 0), 1, 8, 0);
             
             ostringstream sstream;
-            sstream << iterator->id;
+            sstream << iterator->idString;
             string idString = sstream.str();
-            
-            CvFont font;
-            double hScale = .5;
-            double vScale = .5;
-            int lineWidth = 1;
-            cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX | CV_FONT_ITALIC, hScale, vScale, 0, lineWidth);
             
             CvPoint p3;
             p3.x = (small_image.size().width - iterator->rectangle.x - iterator->rectangle.width + 2) * IMAGE_SCALE;
-            p3.y = (iterator->rectangle.y + 13) * IMAGE_SCALE;
+            p3.y = (iterator->rectangle.y + 20) * IMAGE_SCALE;
             
-            cv::putText(draw_image, idString.c_str(), p3, 1, 1, cvScalar(0, 255, 0));
+            cv::putText(draw_image, idString.c_str(), p3, 1.5, 1.5, cvScalar(255, 255, 0));
         }
         
         JSON += "    ]\n}\n";
@@ -335,15 +311,15 @@ void Detector::detectAndDisplay() {
     }
     
     // draw from face db
-    for(int i = 0; i < faces.size(); i++)
+    /*for(int i = 0; i < faces.size(); i++)
     {
         CvPoint center;
         int radius;
         center.x = cvRound((small_image.size().width - faces[i].width * 0.5 - faces[i].x) * IMAGE_SCALE);
         center.y = cvRound((faces[i].y + faces[i].height * 0.5) * IMAGE_SCALE);
         radius = cvRound((faces[i].width + faces[i].height) * 0.25 * IMAGE_SCALE);
-    cv:circle(draw_image, center, radius, CV_RGB(255, 255, 255), 1, 8, 0);
-    }
+        cv:circle(draw_image, center, radius, CV_RGB(255, 255, 255), 1, 8, 0);
+    }*/
     
     displayFPS();
     //if(personList.size() > 0)
@@ -364,11 +340,7 @@ void Detector::displayFPS() {
     sstream << "FPS " << fps;
     string fpsString = sstream.str();
     
-    CvFont font;
-    double scale = 1.0;
-    int lineWidth = 1;
-    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX | CV_FONT_ITALIC, scale, scale, 0, lineWidth);
-    cv::putText(draw_image, fpsString.c_str(), cvPoint(10, 30), 1, 1, cvScalar(255, 255, 0));
+    cv::putText(draw_image, fpsString.c_str(), cvPoint(10, 60), 2, 2, cvScalar(255, 255, 0));
 }
 
 Detector::~Detector() {

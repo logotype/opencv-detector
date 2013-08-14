@@ -8,7 +8,7 @@
 
 #include "Person.hpp"
 
-#define TIMER 10;
+#define TIMER 20;
 
 Person::Person(cv::Rect rectangle, int id, std::string idString) {
     this->visibleFrames = 0;
