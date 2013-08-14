@@ -15,22 +15,17 @@
 class Person
 {
 public:
-    Person();
+    Person(cv::Rect rectangle, int id, std::string idString);
     ~Person();
 
     int visibleFrames;
     int timer;
     bool available;
-    std::string id;
-    int idNumber;
-    double x;
-    double y;
-    double width;
-    double height;
+    std::string idString;
+    int id;
     cv::Rect rectangle;
     
-    void create( int x, int y, int width, int height, cv::Rect rectangle );
-    void update( int x, int y, int width, int height, cv::Rect rectangle );
+    void update(cv::Rect rectangle);
     void countDown();
     void kill();
     bool dead();

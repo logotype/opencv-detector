@@ -45,11 +45,6 @@ private:
     time_t fps_end;
     int fps_counter;
 
-    // Utility functions
-    float dist(int x1, int y1, int x2, int y2);
-    bool in_range(int input, int min, int max);
-    double map(double x, double in_min, double in_max, double out_min, double out_max);
-
     // Class methods
     void initOpenCV();
     void runLoop();

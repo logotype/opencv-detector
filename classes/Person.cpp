@@ -8,37 +8,24 @@
 
 #include "Person.hpp"
 
-Person::Person() {
+#define TIMER 10;
+
+Person::Person(cv::Rect rectangle, int id, std::string idString) {
     this->visibleFrames = 0;
-    this->timer = 10;
+    this->timer = TIMER;
     this->available = true;
-    this->x = 0;
-    this->y = 0;
+    this->rectangle = rectangle;
+    this->idString = idString;
+    this->id = id;
 };
 Person::~Person() {
 }
 
-void Person::create( int x, int y, int width, int height, cv::Rect rectangle ) {
+void Person::update(cv::Rect rectangle) {
     if(dead()) {
         return;
     }
-    this->x = x;
-    this->y = y;
-    this->width = width;
-    this->height = height;
-    this->rectangle = rectangle;
-    //std::cout << "Created, x: " << x << ", y: " << y << ", width: " << width << ", height: " << height << "\n";
-}
-
-void Person::update( int x, int y, int width, int height, cv::Rect rectangle ) {
-    if(dead()) {
-        return;
-    }
-    this->timer = 50;
-    this->x = x;
-    this->y = y;
-    this->width = width;
-    this->height = height;
+    this->timer = TIMER;
     this->rectangle = rectangle;
 }
 

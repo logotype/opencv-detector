@@ -105,7 +105,7 @@
 		375FD09017B1FDF00075BB8A /* libopencv_imgproc.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.4.5.dylib; path = libs/opencv.2.4.5/libopencv_imgproc.2.4.5.dylib; sourceTree = SOURCE_ROOT; };
 		375FD09217B1FE160075BB8A /* libopencv_objdetect.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_objdetect.2.4.5.dylib; path = libs/opencv.2.4.5/libopencv_objdetect.2.4.5.dylib; sourceTree = SOURCE_ROOT; };
 		375FD09417B1FE5B0075BB8A /* libopencv_core.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.5.dylib; path = libs/opencv.2.4.5/libopencv_core.2.4.5.dylib; sourceTree = SOURCE_ROOT; };
-		377CED8F17B3D4BB006982B1 /* StringUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtil.h; sourceTree = "<group>"; };
+		377CED8F17B3D4BB006982B1 /* Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		377CEFBC17B41FAD006982B1 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
 		377CEFBD17B41FAD006982B1 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		377CEFBE17B41FAD006982B1 /* base64.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = base64.hpp; sourceTree = "<group>"; };
@@ -254,7 +254,7 @@
 				08FB7796FE84155DC02AAC07 /* Detector.cpp */,
 				37007F8D17B29278000AA325 /* Person.hpp */,
 				37007F8C17B29278000AA325 /* Person.cpp */,
-				377CED8F17B3D4BB006982B1 /* StringUtil.h */,
+				377CED8F17B3D4BB006982B1 /* Util.h */,
 				37EB146A17B49E6600DCF662 /* DataHandler.hpp */,
 				37EB146917B49E6600DCF662 /* DataHandler.cpp */,
 				37EB146817B439F100DCF662 /* echo_handler.hpp */,
