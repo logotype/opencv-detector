@@ -46,7 +46,8 @@ void Detector::initOpenCV() {
 #endif
     
     // Get Resources URL
-    CFURLRef url = CFBundleCopyResourceURL(mainBundle, CFSTR("haarcascade_frontalface_alt2"), CFSTR("xml"), NULL);
+    // haarcascade_frontalface_alt2
+    CFURLRef url = CFBundleCopyResourceURL(mainBundle, CFSTR("lbpcascade_frontalface"), CFSTR("xml"), NULL);
     
     // Get a mutable string and remove localhost
     CFMutableStringRef urlWithLocalhost = CFStringCreateMutableCopy(NULL, 0, CFURLGetString(url));
@@ -56,7 +57,7 @@ void Detector::initOpenCV() {
     
     if(!cascade.load(filePath)){ printf("Failed to load cascade.\n"); };
     
-    delete filePath;
+    free(filePath);
     filePath = NULL;
     CFRelease(url);
     CFRelease(urlWithLocalhost);
