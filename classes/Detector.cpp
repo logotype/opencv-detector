@@ -8,9 +8,8 @@ using namespace std;
 #define IMAGE_SCALE 1
 #define IMAGE_WIDTH 1280.0
 #define IMAGE_HEIGHT 720.0
-#define OBJECT_MINSIZE 140 //140
-#define OBJECT_MAXSIZE 400 //400
-#define OBJECT_SIZE_CHANGE_RANGE 200
+#define OBJECT_MINSIZE 140
+#define OBJECT_MAXSIZE 400
 #define OBJECT_MOVEMENT_DISTANCE 100
 #define OBJECT_MINIMUM_VISIBLE_FRAMES 30
 
@@ -75,7 +74,6 @@ void Detector::runLoop() {
     for(;;)
     {
         current_frame = cv::cvarrToMat(cvQueryFrame(capture));
-        
         detectAndDisplay();
         int key = cvWaitKey(1);
         if(key == 'q' || key == 'Q')
@@ -85,7 +83,7 @@ void Detector::runLoop() {
 
 void Detector::detectAndDisplay() {
     
-    std::vector<cv::Rect> faces;
+    vector<cv::Rect> faces;
     cv::Mat frame_gray;
     
     cvtColor(current_frame, frame_gray, CV_BGR2GRAY);
@@ -98,10 +96,9 @@ void Detector::detectAndDisplay() {
     draw_image = cv::Mat(current_frame);
     
     if(personList.empty()) {
-        for(int i = 0; i < faces.size(); i++) {
+        for(int i = 0; i < faces.size(); i++)
             personList.push_front(Person(faces[i], captureCount++, randomString()));
-        }
-        
+
     } else if(personList.size() <= faces.size()) {
         
         bool used[faces.size()];
@@ -117,8 +114,13 @@ void Detector::detectAndDisplay() {
             
             for(int i = 0; i < faces.size(); i++) {
                 float d = dist(faces[i].x, faces[i].y, iterator->rectangle.x, iterator->rectangle.y);
-                //if(d < record && d < OBJECT_MOVEMENT_DISTANCE && !used[i] && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
                 if(d < record && !used[i] && d < OBJECT_MOVEMENT_DISTANCE) {
+                    /*if(d < record && d < OBJECT_MOVEMENT_DISTANCE && !used[i] &&
+                       in_range(faces[i].width,
+                                iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE,
+                                iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) &&
+                       in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE,
+                                iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {*/
                     record = d;
                     index = i;
                     doUpdate = true;
@@ -133,11 +135,10 @@ void Detector::detectAndDisplay() {
         }
         
         // add any unused faces
-        for(int i = 0; i < faces.size(); i++) {
-            if(!used[i]) {
+        for(int i = 0; i < faces.size(); i++)
+            if(!used[i])
                 personList.push_front(Person(faces[i], captureCount++, randomString()));
-            }
-        }
+
     } else {
         
         // all Person objects start out as available
@@ -156,9 +157,13 @@ void Detector::detectAndDisplay() {
             for(iterator = personList.begin(); iterator!= personList.end(); iterator++)
             {
                 float d = dist(faces[i].x, faces[i].y, iterator->rectangle.x, iterator->rectangle.y);
-                
-                //if(d < record && d < OBJECT_MOVEMENT_DISTANCE && in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) && in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE, iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {
                 if(d < record && iterator->available && d < OBJECT_MOVEMENT_DISTANCE) {
+                    /*if(d < record && d < OBJECT_MOVEMENT_DISTANCE &&
+                       in_range(faces[i].width, iterator->rectangle.width - OBJECT_SIZE_CHANGE_RANGE,
+                                iterator->rectangle.width + OBJECT_SIZE_CHANGE_RANGE) &&
+                       in_range(faces[i].height, iterator->rectangle.height - OBJECT_SIZE_CHANGE_RANGE,
+                                iterator->rectangle.height + OBJECT_SIZE_CHANGE_RANGE)) {*/
+
                     record = d;
                     index = j;
                     doUpdate = true;
@@ -197,9 +202,8 @@ void Detector::detectAndDisplay() {
                     deleteIterator->countDown();
                 }
             }
-            if(!didDelete) {
+            if(!didDelete)
                 ++deleteIterator;
-            }
         }
     }
     
