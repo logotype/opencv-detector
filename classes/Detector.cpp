@@ -16,18 +16,19 @@ using namespace std;
 Detector::Detector() {
     
     // Start a thread to run the processing loop
-    thread t(bind(&DataHandler::process_messages,&server));
+    thread processMessagesThread(bind(&DataHandler::process_messages,&server));
     
     // Run the asio loop in a separate thread
-    thread s(bind(&DataHandler::run,&server));
-    
-    // FPS
-    time(&fps_start);
+    thread dataHandlerThread(bind(&DataHandler::run,&server));
     
     fps_counter = 0;
     captureCount = 0;
     
     initOpenCV();
+
+    // FPS
+    time(&fps_start);
+
     runLoop();
 }
 
@@ -46,7 +47,7 @@ void Detector::initOpenCV() {
 #endif
     
     // Get Resources URL
-    // haarcascade_frontalface_alt2
+    // haarcascade_frontalface_alt2 lbpcascade_frontalface
     CFURLRef url = CFBundleCopyResourceURL(mainBundle, CFSTR("lbpcascade_frontalface"), CFSTR("xml"), NULL);
     
     // Get a mutable string and remove localhost
