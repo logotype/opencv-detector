@@ -193,7 +193,6 @@
 		377CF02317B41FAD006982B1 /* version.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = version.hpp; sourceTree = "<group>"; };
 		377CF02717B422FA006982B1 /* libboost_thread.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_thread.dylib; path = "libs/boost-libs/libboost_thread.dylib"; sourceTree = "<group>"; };
 		377CF02917B42CDD006982B1 /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = "libs/boost-libs/libboost_system.dylib"; sourceTree = "<group>"; };
-		37EB146817B439F100DCF662 /* echo_handler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = echo_handler.hpp; sourceTree = "<group>"; };
 		37EB146917B49E6600DCF662 /* DataHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHandler.cpp; sourceTree = "<group>"; };
 		37EB146A17B49E6600DCF662 /* DataHandler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DataHandler.hpp; path = classes/DataHandler.hpp; sourceTree = SOURCE_ROOT; };
 		4D7DBE570C04A8FF00D8835D /* Crowd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Crowd.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -250,14 +249,13 @@
 		37007F8F17B29292000AA325 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				377CED8F17B3D4BB006982B1 /* Util.h */,
 				3740F77E17B78DC600D45FD7 /* Detector.hpp */,
 				08FB7796FE84155DC02AAC07 /* Detector.cpp */,
 				37007F8D17B29278000AA325 /* Person.hpp */,
 				37007F8C17B29278000AA325 /* Person.cpp */,
-				377CED8F17B3D4BB006982B1 /* Util.h */,
 				37EB146A17B49E6600DCF662 /* DataHandler.hpp */,
 				37EB146917B49E6600DCF662 /* DataHandler.cpp */,
-				37EB146817B439F100DCF662 /* echo_handler.hpp */,
 			);
 			name = Classes;
 			path = classes;
@@ -607,7 +605,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "Crowd" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -695,29 +693,29 @@
 		1DEB923608733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
 		1DEB923708733DC60010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};
 		4D7DBE5B0C04A8FF00D8835D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -756,7 +754,7 @@
 					Carbon,
 				);
 				PRODUCT_NAME = Crowd;
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -766,7 +764,6 @@
 		4D7DBE5C0C04A8FF00D8835D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -803,7 +800,7 @@
 					Carbon,
 				);
 				PRODUCT_NAME = Crowd;
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;

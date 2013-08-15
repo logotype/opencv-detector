@@ -3,6 +3,7 @@
 
 const char* WINDOW_NAME = "Detector";
 using namespace std;
+using namespace cv;
 
 //#define DEBUG 1
 #define IMAGE_SCALE 1
@@ -75,7 +76,7 @@ void Detector::initOpenCV() {
 void Detector::runLoop() {
     for(;;)
     {
-        current_frame = cv::cvarrToMat(cvQueryFrame(capture));
+        current_frame = cvarrToMat(cvQueryFrame(capture));
         detectAndDisplay();
         int key = cvWaitKey(1);
         if(key == 'q' || key == 'Q')
@@ -86,16 +87,16 @@ void Detector::runLoop() {
 void Detector::detectAndDisplay() {
     
     vector<cv::Rect> faces;
-    cv::Mat frame_gray;
+    Mat frame_gray;
     
     cvtColor(current_frame, frame_gray, CV_BGR2GRAY);
     equalizeHist(frame_gray, frame_gray);
-    cv::resize(frame_gray, small_image, cv::Size(current_frame.size().width / IMAGE_SCALE, current_frame.size().height / IMAGE_SCALE));
-    cv::flip(small_image, small_image, 1);
+    resize(frame_gray, small_image, cv::Size(current_frame.size().width / IMAGE_SCALE, current_frame.size().height / IMAGE_SCALE));
+    flip(small_image, small_image, 1);
     
     cascade.detectMultiScale(small_image, faces, 1.1, 2, 0, cvSize(OBJECT_MINSIZE / IMAGE_SCALE, OBJECT_MINSIZE / IMAGE_SCALE), cvSize(OBJECT_MAXSIZE / IMAGE_SCALE, OBJECT_MAXSIZE / IMAGE_SCALE));
     
-    draw_image = cv::Mat(current_frame);
+    draw_image = Mat(current_frame);
     
     if(personList.empty()) {
         for(int i = 0; i < faces.size(); i++)
@@ -290,7 +291,7 @@ void Detector::detectAndDisplay() {
             CvPoint p2;
             p2.x = (small_image.size().width - (iterator->rectangle.x + iterator->rectangle.width)) * IMAGE_SCALE;
             p2.y = (iterator->rectangle.y + iterator->rectangle.height) * IMAGE_SCALE;
-            cv::rectangle(draw_image, p1, p2, CV_RGB(0, 255, 0), 1, 8, 0);
+            rectangle(draw_image, p1, p2, CV_RGB(0, 255, 0), 1, 8, 0);
             
             ostringstream sstream;
             sstream << iterator->idString;
@@ -300,7 +301,7 @@ void Detector::detectAndDisplay() {
             p3.x = (small_image.size().width - iterator->rectangle.x - iterator->rectangle.width + 2) * IMAGE_SCALE;
             p3.y = (iterator->rectangle.y + 20) * IMAGE_SCALE;
             
-            cv::putText(draw_image, idString.c_str(), p3, 1.5, 1.5, cvScalar(255, 255, 0));
+            putText(draw_image, idString.c_str(), p3, 1.5, 1.5, cvScalar(255, 255, 0));
         }
         
         JSON += "    ]\n}\n";
@@ -346,7 +347,7 @@ void Detector::displayFPS() {
     sstream << "FPS " << fps;
     string fpsString = sstream.str();
     
-    cv::putText(draw_image, fpsString.c_str(), cvPoint(10, 60), 2, 2, cvScalar(255, 255, 0));
+    putText(draw_image, fpsString.c_str(), cvPoint(10, 60), 2, 2, cvScalar(255, 255, 0));
 }
 
 Detector::~Detector() {
