@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8FD3A10B-3D20-4637-B56E-8C6DCB0A7671</string>
+	<key>IDESourceControlProjectName</key>
+	<string>CVDetector</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6703CAA8-9B28-4015-B1D3-7A280F7B931B</key>
+		<string>https://github.com/logotype/opencv-detector.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CVDetector.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6703CAA8-9B28-4015-B1D3-7A280F7B931B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/logotype/opencv-detector.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6703CAA8-9B28-4015-B1D3-7A280F7B931B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6703CAA8-9B28-4015-B1D3-7A280F7B931B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>opencv-detector</string>
+		</dict>
+	</array>
+</dict>
+</plist>

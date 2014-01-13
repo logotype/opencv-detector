@@ -47,6 +47,10 @@ void Detector::initOpenCV() {
     cvSetCaptureProperty(capture, CV_CAP_PROP_FPS, 30);
 #endif
     
+    // Set window properties
+    cvNamedWindow(WINDOW_NAME, CV_WINDOW_NORMAL);
+    cvSetWindowProperty(WINDOW_NAME, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    
     // Get Resources URL
     // haarcascade_frontalface_alt2 lbpcascade_frontalface
     CFURLRef url = CFBundleCopyResourceURL(mainBundle, CFSTR("lbpcascade_frontalface"), CFSTR("xml"), NULL);
