@@ -9,7 +9,7 @@
 #ifndef __CVDetector__Person__
 #define __CVDetector__Person__
 
-#include <opencv2/objdetect/objdetect.hpp>
+#include <opencv2/opencv.hpp>
 #include <iostream>
 
 class Person

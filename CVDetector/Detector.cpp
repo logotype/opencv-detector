@@ -38,18 +38,27 @@ void Detector::initOpenCV() {
     assert(mainBundle);
     
 #ifdef DEBUG
-    capture = cvCaptureFromAVI("<full path to .mov video>"); // full path
-    captureFPS = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+    capture = new VideoCapture("<full path to .mov video>");
+    captureFPS = (int) capture->get(CAP_PROP_FPS);
+
+    if(!capture->isOpened()) {
+        printf("Error, video file not open");
+    }
 #else
-    capture = cvCreateCameraCapture(CV_CAP_ANY);
-    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, IMAGE_WIDTH);
-    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, IMAGE_HEIGHT);
-    cvSetCaptureProperty(capture, CV_CAP_PROP_FPS, 30);
+    capture = new VideoCapture(CAP_ANY);
+    capture->set(CAP_PROP_FRAME_WIDTH, IMAGE_WIDTH);
+    capture->set(CAP_PROP_FRAME_HEIGHT, IMAGE_HEIGHT);
+    capture->set(CAP_PROP_CONVERT_RGB , false);
+    capture->set(CAP_PROP_FPS, 60);
+    
+    if(!capture->isOpened()) {
+        printf("Error, camera not open");
+    }
 #endif
     
     // Set window properties
-    cvNamedWindow(WINDOW_NAME, CV_WINDOW_NORMAL);
-    cvSetWindowProperty(WINDOW_NAME, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    namedWindow(WINDOW_NAME, WINDOW_NORMAL);
+    //cvSetWindowProperty(WINDOW_NAME, WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
     
     // Get Resources URL
     // haarcascade_frontalface_alt2 lbpcascade_frontalface
@@ -71,9 +80,6 @@ void Detector::initOpenCV() {
     url = NULL;
     urlWithLocalhost = NULL;
     
-    storage = cvCreateMemStorage(0);
-    assert(storage);
-    
     if(!capture)
         abort();
 }
@@ -81,11 +87,9 @@ void Detector::initOpenCV() {
 void Detector::runLoop() {
     for(;;)
     {
-        current_frame = cvarrToMat(cvQueryFrame(capture));
+        capture->operator>>(current_frame);
         detectAndDisplay();
-        int key = cvWaitKey(1);
-        if(key == 'q' || key == 'Q')
-            break;
+        if(waitKey(1) >= 0) break;
     }
 }
 
@@ -94,12 +98,12 @@ void Detector::detectAndDisplay() {
     vector<cv::Rect> faces;
     Mat frame_gray;
     
-    cvtColor(current_frame, frame_gray, CV_BGR2GRAY);
+    cvtColor(current_frame, frame_gray, COLOR_BGR2GRAY);
     equalizeHist(frame_gray, frame_gray);
     resize(frame_gray, small_image, cv::Size(current_frame.size().width / IMAGE_SCALE, current_frame.size().height / IMAGE_SCALE));
     flip(small_image, small_image, 1);
     
-    cascade.detectMultiScale(small_image, faces, 1.1, 2, 0, cvSize(OBJECT_MINSIZE / IMAGE_SCALE, OBJECT_MINSIZE / IMAGE_SCALE), cvSize(OBJECT_MAXSIZE / IMAGE_SCALE, OBJECT_MAXSIZE / IMAGE_SCALE));
+    cascade.detectMultiScale(small_image, faces, 1.1, 2, 0, cv::Size(OBJECT_MINSIZE / IMAGE_SCALE, OBJECT_MINSIZE / IMAGE_SCALE), cv::Size(OBJECT_MAXSIZE / IMAGE_SCALE, OBJECT_MAXSIZE / IMAGE_SCALE));
     
     draw_image = Mat(current_frame);
     
@@ -221,8 +225,8 @@ void Detector::detectAndDisplay() {
         stringstream iHeight;
         
 #ifdef DEBUG
-        int width = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
-        int height = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
+        int width = (int) capture->get(CAP_PROP_FRAME_WIDTH);
+        int height = (int) capture->get(CAP_PROP_FRAME_HEIGHT);
         iWidth << width;
         iHeight << height;
 #else
@@ -289,24 +293,24 @@ void Detector::detectAndDisplay() {
             }
             
             // draw from personList
-            CvPoint p1;
+            cv::Point p1;
             p1.x = (small_image.size().width - iterator->rectangle.x) * IMAGE_SCALE;
             p1.y = iterator->rectangle.y * IMAGE_SCALE;
             
-            CvPoint p2;
+            cv::Point p2;
             p2.x = (small_image.size().width - (iterator->rectangle.x + iterator->rectangle.width)) * IMAGE_SCALE;
             p2.y = (iterator->rectangle.y + iterator->rectangle.height) * IMAGE_SCALE;
-            rectangle(draw_image, p1, p2, CV_RGB(0, 255, 0), 1, 8, 0);
+            rectangle(draw_image, p1, p2, cv::Scalar(0, 255, 0), 1, 8, 0);
             
             ostringstream sstream;
             sstream << iterator->idString;
             string idString = sstream.str();
             
-            CvPoint p3;
+            cv::Point p3;
             p3.x = (small_image.size().width - iterator->rectangle.x - iterator->rectangle.width + 2) * IMAGE_SCALE;
             p3.y = (iterator->rectangle.y + 20) * IMAGE_SCALE;
             
-            putText(draw_image, idString.c_str(), p3, 1.5, 1.5, cvScalar(255, 255, 0));
+            putText(draw_image, idString.c_str(), p3, 1.5, 1.5, cv::Scalar(255, 255, 0));
         }
         
         JSON += "    ]\n}\n";
@@ -325,12 +329,12 @@ void Detector::detectAndDisplay() {
     // draw from face db
     for(int i = 0; i < faces.size(); i++)
      {
-        CvPoint center;
+        cv::Point center;
         int radius;
         center.x = cvRound((small_image.size().width - faces[i].width * 0.5 - faces[i].x) * IMAGE_SCALE);
         center.y = cvRound((faces[i].y + faces[i].height * 0.5) * IMAGE_SCALE);
         radius = cvRound((faces[i].width + faces[i].height) * 0.25 * IMAGE_SCALE);
-        cv:circle(draw_image, center, radius, CV_RGB(255, 255, 255), 1, 8, 0);
+        cv:circle(draw_image, center, radius, cv::Scalar(255, 255, 255), 1, 8, 0);
      }
     
     displayFPS();
@@ -352,7 +356,7 @@ void Detector::displayFPS() {
     sstream << "FPS " << fps;
     string fpsString = sstream.str();
     
-    putText(draw_image, fpsString.c_str(), cvPoint(10, 60), 2, 2, cvScalar(255, 255, 0));
+    putText(draw_image, fpsString.c_str(), cv::Point(10, 60), 2, 2, cv::Scalar(255, 255, 0));
 }
 
 Detector::~Detector() {

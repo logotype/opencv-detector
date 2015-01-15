@@ -30,9 +30,8 @@ private:
     DataHandler server;
     
     // OpenCV
-    CvCapture *capture;
+    cv::VideoCapture *capture;
     cv::CascadeClassifier cascade;
-    CvMemStorage *storage;
     cv::Mat current_frame;
     cv::Mat draw_image;
     cv::Mat small_image;
